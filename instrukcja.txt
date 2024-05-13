@@ -1,0 +1,3 @@
+1. Wczytaj plik (z niego zostaną wczytane kraje, które będziesz mógł wybrać z listy)
+2. Wybierz kraj jakiego walute chcesz porównać z dollarem amerykanskim.
+3. Kliknij guzik do przewidywania wartości aby wyświetlić wykres.
