@@ -13,11 +13,59 @@ instrukcja = "instrukcja.txt"
 plik_instrukcja = open(instrukcja,'r',encoding='utf-8')
 instrukcja_tekst = plik_instrukcja.read()
 
-def predict(nazwa_pliku):
+
+
+def get_data(data, look_back):
+  data_x, data_y = [],[]
+  for i in range(len(data)-look_back-1):
+    data_x.append(data[i:(i+look_back),0])
+    data_y.append(data[i+look_back,0])
+  return np.array(data_x) , np.array(data_y)
+
+
+def predict(data):
+    scaler = MinMaxScaler()
+    data = scaler.fit_transform(data)
+    train = data[:4800]
+    test = data[4800:]
+    look_back = 1
+    x_train , y_train = get_data(train, look_back)
+    x_test , y_test = get_data(test,look_back)
+    x_train = x_train.reshape(x_train.shape[0],x_train.shape[1], 1)
+    x_test = x_test.reshape(x_test.shape[0],x_test.shape[1], 1)
+    n_features=x_train.shape[1]
+    model=Sequential()
+    model.add(LSTM(100,activation='relu',input_shape=(1,1)))
+    model.add(Dense(n_features))
+    model.summary()
+    model.compile(optimizer='adam', loss = 'mse')
+    model.fit(x_train,y_train, epochs = 2, batch_size=1)
+    
+    scaler.scale_
+
+    y_pred = model.predict(x_test)
+    y_pred = scaler.inverse_transform(y_pred)
+    
+    y_test = np.array(y_test).reshape(-1,1)
+    y_test = scaler.inverse_transform(y_test)
+    
+    #print("Mean squared error: ", mean_squared_error(y_test, y_pred) )
+    
+    plt.figure(figsize=(10,5))
+    plt.title('Foreign Exchange Rate of India')
+    plt.plot(y_test , label = 'Actual', color = 'g')
+    plt.plot(y_pred , label = 'Predicted', color = 'r')
+    plt.legend()
+    plt.show()
+    
+def prepare_data():
+    nazwa_pliku = file_input.get()
     currency_country = combobox.get()
     data_set = pd.read_csv(nazwa_pliku,na_values='ND') #wczytanie danych i zamiana ND na NaN
     data_for_chosen_currency = data_set[currency_country]
     data_for_chosen_currency = np.array(data_for_chosen_currency).reshape(-1,1) #zamiana na tablice
+    predict(data_for_chosen_currency)    
+    
     
 def generuj_plik_z_nazwami_walut(nazwa_pliku):
     plik_csv = open(nazwa_pliku, 'r', encoding='utf-8')
@@ -36,7 +84,6 @@ def generuj_plik_z_nazwami_walut(nazwa_pliku):
     
 def wczytaj_plik():
     nazwa_pliku = file_input.get()
-    data_set = pd.read_csv(nazwa_pliku, na_values='ND')  # Wczytanie danych i zamiana ND na NaN
     nazwy_walut = generuj_plik_z_nazwami_walut(nazwa_pliku)
     combobox['values'] = nazwy_walut
 
@@ -66,7 +113,7 @@ combobox = ttk.Combobox(frame_buttons, width=27)
 combobox.grid(row=1, column=1, padx=5, pady=5)
 
 #przycisk do przewidywania
-predict_button = tk.Button(root, text="Przewidywanie wartosci", command=predict, width=20)
+predict_button = tk.Button(root, text="Przewidywanie wartosci", command=prepare_data, width=20)
 predict_button.pack(pady=5)
 
 #ramka dla instrukcji
