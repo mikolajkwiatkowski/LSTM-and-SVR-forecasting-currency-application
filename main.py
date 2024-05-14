@@ -39,7 +39,7 @@ def predict(data):
     model.add(Dense(n_features))
     model.summary()
     model.compile(optimizer='adam', loss = 'mse')
-    model.fit(x_train,y_train, epochs = 2, batch_size=1)
+    model.fit(x_train,y_train, epochs = 5, batch_size=1)
     
     scaler.scale_
 
@@ -52,7 +52,7 @@ def predict(data):
     #print("Mean squared error: ", mean_squared_error(y_test, y_pred) )
     
     plt.figure(figsize=(10,5))
-    plt.title('Foreign Exchange Rate of India')
+    plt.title('Foreign Exchange Rate of Chosen Country')
     plt.plot(y_test , label = 'Actual', color = 'g')
     plt.plot(y_pred , label = 'Predicted', color = 'r')
     plt.legend()
@@ -62,6 +62,7 @@ def prepare_data():
     nazwa_pliku = file_input.get()
     currency_country = combobox.get()
     data_set = pd.read_csv(nazwa_pliku,na_values='ND') #wczytanie danych i zamiana ND na NaN
+    data_set.interpolate(inplace=True)
     data_for_chosen_currency = data_set[currency_country]
     data_for_chosen_currency = np.array(data_for_chosen_currency).reshape(-1,1) #zamiana na tablice
     predict(data_for_chosen_currency)    
