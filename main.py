@@ -12,7 +12,6 @@ from tkinter import ttk
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
 import csv
-
 instrukcja = "instrukcja.txt"
 plik_instrukcja = open(instrukcja,'r',encoding='utf-8')
 instrukcja_tekst = plik_instrukcja.read()
@@ -24,7 +23,6 @@ def get_data(data, look_back):
     data_x.append(data[i:(i+look_back),0])
     data_y.append(data[i+look_back,0])
   return np.array(data_x) , np.array(data_y) #zwraca 2 tablice z danymi
-
 
 def predict_for_lstm(data, dates, split_index): # dodanie parametru split_index
     scaler = MinMaxScaler()  # obiekt skalera
@@ -89,7 +87,6 @@ def predict_for_svr(data_set):
 #Zwraca rzeczywiste wartości, prognozowane wartości i odpowiadające im daty.
     return y_test, y_pred, data_set.index[split_index:]
 
-   
 def button_prediction():
     global currency_country
     currency_country = combobox.get()
@@ -112,7 +109,6 @@ def button_prediction():
     y_test_svr, y_pred_svr, dates_svr = predict_for_svr(data_for_svr) #wywoluje metody predict
     y_pred_lstm, dates_lstm = predict_for_lstm(data_for_lstm, data_set.index, split_index)
 
-
     #Rysowanie wykresu o wymiarach 14x7 cali
     plt.figure(figsize=(14, 7))
     plt.plot(dates_svr, y_test_svr, label='Actual')
@@ -123,10 +119,7 @@ def button_prediction():
     plt.ylabel('Exchange Rate')
     plt.legend()
     plt.show()
-
-
-
-    
+  
 #pozwala otworzyc plik i zapisac z niego nazwy walut do comoboxa  
 def read_file():
     global filename
@@ -136,8 +129,6 @@ def read_file():
     pierwszy_wiersz = next(czytnik_csv)
     nazwy_walut = [nazwa.strip(",") for nazwa in pierwszy_wiersz[2:]] 
     combobox['values'] = nazwy_walut
-
-
 
 ################################################ GUI ###################################################################
 root = tk.Tk()
@@ -165,8 +156,6 @@ combobox.grid(row=1, column=1, padx=5, pady=5)
 #przycisk do przewidywania
 predict_button = tk.Button(root, text="Przewidywanie wartosci", command=button_prediction, width=40)
 predict_button.pack(pady=5)
-
-
 
 #ramka dla instrukcji
 frame_label = tk.Frame(root, bg="#f0f0f0")
